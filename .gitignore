@@ -1,0 +1,8 @@
+.vscode
+
+build
+public
+include
+lib
+
+flow
