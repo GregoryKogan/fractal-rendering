@@ -10,15 +10,14 @@ Application::Application() {
         return;
     }
 
-    SDL_SetWindowTitle(window_, "Flow");
     SDL_SetRenderDrawColor(renderer_, 36, 40, 59, 255);
     last_time_ = SDL_GetTicks64();
 
     // random block position and velocity
     data_.block_x = rand() % window_width_;
     data_.block_y = rand() % window_height_;
-    data_.block_vel_x = (rand() % 10) / 20.0;
-    data_.block_vel_y = (rand() % 10) / 20.0;
+    data_.block_vel_x = (rand() % 1000) / 2000.0;
+    data_.block_vel_y = (rand() % 1000) / 2000.0;
 }
 
 Application::~Application() { SDL_DestroyWindow(window_); }

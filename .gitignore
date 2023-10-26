@@ -1,8 +1,2 @@
 .vscode
-
-build
-public
-include
-lib
-
-flow
+DS_Store

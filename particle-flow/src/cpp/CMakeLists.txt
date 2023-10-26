@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.24)
 project(flow)
 
 set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/public)
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/../../public)
 
 if (WIN32)
     # Forcing MSVC to use utf-8 encoding
@@ -11,7 +11,7 @@ if (WIN32)
 endif(WIN32)
 
 add_executable(
-    flow 
+    flow
     src/main.cpp
 
     src/Application.hpp
@@ -40,12 +40,6 @@ if (DEFINED EMSCRIPTEN)
         "-sASYNCIFY"
         "-O2"
     )
-    add_custom_command(
-        TARGET ${PROJECT_NAME} POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy
-                ${CMAKE_SOURCE_DIR}/index.html
-                ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/index.html
-        )
 else()
 
     set(extra_flags "")
