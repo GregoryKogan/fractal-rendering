@@ -4,9 +4,15 @@
 set -e
 
 # build cpp
-cd src/cpp/build
+cd src/cpp
+rm -rf build
+mkdir build
+cd build
+emcmake cmake ..
 make
-cd ../../..
+cd ..
+rm -rf build
+cd ../..
 
 # build
 yarn build
