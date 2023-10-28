@@ -26,3 +26,5 @@ include
 lib
 
 flow
+flow.js
+flow.wasm
