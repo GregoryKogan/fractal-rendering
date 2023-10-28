@@ -3,7 +3,7 @@
 Application::Application() {
     int width, height;
     SDL_GetWindowSize(window_, &width, &height);
-    SDL_CreateWindowAndRenderer(width, height, SDL_WINDOW_RESIZABLE, &window_, &renderer_);
+    SDL_CreateWindowAndRenderer(width, height, SDL_WINDOW_RESIZABLE | SDL_RENDERER_ACCELERATED, &window_, &renderer_);
 
     if (!window_ || !renderer_) {
         std::cout << "Failed to create window and renderer\n";
@@ -26,6 +26,8 @@ void Application::loop() {
         sync_data_();
 
         double delta_time = get_delta_time_();
+        if (delta_time < 16) SDL_Delay(16 - delta_time);
+
         sketch_->update(delta_time);
         sketch_->draw();
     }
