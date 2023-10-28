@@ -19,6 +19,8 @@ add_executable(
 
     src/Application.hpp
     src/Application.cpp
+    src/Sketch/Sketch.hpp
+    src/Sketch/Sketch.cpp
 )
 
 target_include_directories(${PROJECT_NAME} PUBLIC ${PROJECT_SOURCE_DIR}/include)

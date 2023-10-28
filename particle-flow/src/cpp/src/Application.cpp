@@ -1,8 +1,9 @@
 #include "Application.hpp"
 
 Application::Application() {
-    SDL_GetWindowSize(window_, &window_width_, &window_height_);
-    SDL_CreateWindowAndRenderer(window_width_, window_height_, SDL_WINDOW_RESIZABLE, &window_, &renderer_);
+    int width, height;
+    SDL_GetWindowSize(window_, &width, &height);
+    SDL_CreateWindowAndRenderer(width, height, SDL_WINDOW_RESIZABLE, &window_, &renderer_);
 
     if (!window_ || !renderer_) {
         std::cout << "Failed to create window and renderer\n";
@@ -10,83 +11,92 @@ Application::Application() {
         return;
     }
 
-    SDL_SetRenderDrawColor(renderer_, 36, 40, 59, 255);
-    last_time_ = SDL_GetTicks64();
+    sketch_ = std::make_unique<Sketch>(renderer_);
 
-    // random block position and velocity
-    data_.block_x = rand() % window_width_;
-    data_.block_y = rand() % window_height_;
-    data_.block_vel_x = (rand() % 1000) / 2000.0;
-    data_.block_vel_y = (rand() % 1000) / 2000.0;
+    last_time_ = SDL_GetTicks64();
 }
 
 Application::~Application() { SDL_DestroyWindow(window_); }
 
 void Application::loop() {
-    bool keep_window_open = true;
-    while (keep_window_open) {
-        while (SDL_PollEvent(&window_event_) > 0) {
-            switch (window_event_.type) {
-                case SDL_QUIT:
-                    keep_window_open = false;
-                    break;
-                case SDL_WINDOWEVENT:
-                    switch (window_event_.window.event) {
-                        case SDL_WINDOWEVENT_RESIZED:
-                            window_width_ = window_event_.window.data1;
-                            window_height_ = window_event_.window.data2;
-                            break;
-                    }
-                    break;
-            }
-        }
+    while (keep_window_open_) {
+        handle_window_events_();
+        handle_messages_();
 
-        Uint64 current_time = SDL_GetTicks64();
-        Uint64 delta_time = current_time - last_time_;
-        last_time_ = current_time;
-        update((double)delta_time);
-        draw();
+        sync_data_();
 
-        if (Messenger::instance().has_message()) {
-            std::string message = Messenger::instance().get_message();
-            std::cout << "Message: " << message << "\n";
+        double delta_time = get_delta_time_();
+        sketch_->update(delta_time);
+        sketch_->draw();
+    }
+}
+
+void Application::handle_window_events_() {
+    while (SDL_PollEvent(&window_event_) > 0) {
+        switch (window_event_.type) {
+            case SDL_QUIT:
+                keep_window_open_ = false;
+                break;
+            case SDL_WINDOWEVENT:
+                switch (window_event_.window.event) {
+                    case SDL_WINDOWEVENT_RESIZED:
+                        sketch_->set_window_size(window_event_.window.data1, window_event_.window.data2);
+                        break;
+                }
+                break;
         }
     }
 }
 
-void Application::update(double delta_time) {
-    data_.block_x += data_.block_vel_x * delta_time;
-    data_.block_y += data_.block_vel_y * delta_time;
-
-    if (data_.block_x < 0) {
-        data_.block_x = 0;
-        data_.block_vel_x *= -1;
-    } else if (data_.block_x + data_.block_w > window_width_) {
-        data_.block_x = window_width_ - data_.block_w;
-        data_.block_vel_x *= -1;
-    }
-
-    if (data_.block_y < 0) {
-        data_.block_y = 0;
-        data_.block_vel_y *= -1;
-    } else if (data_.block_y + data_.block_h > window_height_) {
-        data_.block_y = window_height_ - data_.block_h;
-        data_.block_vel_y *= -1;
+void Application::handle_messages_() {
+    if (Messenger::instance().has_message()) {
+        std::string message = Messenger::instance().get_message();
+        std::cout << "Message: " << message << "\n";
     }
 }
 
-void Application::draw() {
-    SDL_RenderClear(renderer_);
+double Application::get_delta_time_() {
+    Uint64 current_time = SDL_GetTicks64();
+    Uint64 delta_time = current_time - last_time_;
+    last_time_ = current_time;
+    delta_time_records_.push_back(delta_time);
+    if (delta_time_records_.size() > max_delta_time_records_) delta_time_records_.pop_front();
+    return (double)delta_time;
+}
 
-    SDL_Rect rect;
-    rect.x = data_.block_x;
-    rect.y = data_.block_y;
-    rect.w = data_.block_w;
-    rect.h = data_.block_h;
+void Application::sync_data_() {
+    Uint64 current_time = SDL_GetTicks64();
+    if (current_time - last_data_sync_time_ < data_sync_period_) return;
+    last_data_sync_time_ = current_time;
 
-    SDL_SetRenderDrawColor(renderer_, 169, 177, 214, 255);
-    SDL_RenderFillRect(renderer_, &rect);
-    SDL_SetRenderDrawColor(renderer_, 36, 40, 59, 255);
+    send_frame_rate_();
+}
 
-    SDL_RenderPresent(renderer_);
+void Application::send_frame_rate_() {
+    rapidjson::Document message_doc;
+    message_doc.SetObject();
+    rapidjson::Document::AllocatorType& allocator = message_doc.GetAllocator();
+    {
+        message_doc.AddMember("to", "js", allocator);
+        rapidjson::Value message_obj;
+        message_obj.SetObject();
+        { message_obj.AddMember("frame_rate", get_frame_rate(), allocator); }
+        message_doc.AddMember("message", message_obj, allocator);
+    }
+    rapidjson::StringBuffer buffer;
+    rapidjson::Writer<rapidjson::StringBuffer> writer(buffer);
+    message_doc.Accept(writer);
+    std::string json_string = buffer.GetString();
+
+    Messenger::instance().send_message(json_string);
+}
+
+Uint64 Application::get_frame_rate() const noexcept {
+    if (!delta_time_records_.size()) return 0;
+
+    Uint64 sum = 0;
+    for (Uint64 delta_time : delta_time_records_) sum += delta_time;
+    Uint64 average_delta_time = sum / delta_time_records_.size();
+    if (!average_delta_time) return 0;
+    return 1000 / average_delta_time;
 }

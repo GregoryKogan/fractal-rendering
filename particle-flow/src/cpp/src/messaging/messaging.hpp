@@ -2,14 +2,13 @@
 #define MESSAGING_HPP
 
 #include <emscripten.h>
+#include <rapidjson/document.h>
+#include <rapidjson/stringbuffer.h>
+#include <rapidjson/writer.h>
 
 #include <iostream>
 #include <queue>
 #include <string>
-
-#include "rapidjson/document.h"
-#include "rapidjson/stringbuffer.h"
-#include "rapidjson/writer.h"
 
 class Messenger {
    private:
