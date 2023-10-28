@@ -10,7 +10,12 @@
   >
     <h1 style="text-align: center">SDL2 Canvas & Vue 3</h1>
     <div class="canvas-wrapper"><SDLCanvas /></div>
-    <ReattachCanvasButton />
+    <v-col>
+      <v-row style="width: 100%; justify-content: space-evenly">
+        <v-btn @click="sendMessage">MESSAGE</v-btn>
+        <ReattachCanvasButton />
+      </v-row>
+    </v-col>
   </v-container>
 </template>
 
@@ -24,6 +29,14 @@ export default defineComponent({
   components: {
     SDLCanvas,
     ReattachCanvasButton,
+  },
+  methods: {
+    sendMessage() {
+      window.postMessage(
+        JSON.stringify({ to: "cpp", message: "Hello, world!" }),
+        "*"
+      );
+    },
   },
 });
 </script>

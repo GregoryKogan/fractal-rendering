@@ -14,6 +14,9 @@ add_executable(
     flow
     src/main.cpp
 
+    src/messaging/messaging.hpp
+    src/messaging/messaging.cpp
+
     src/Application.hpp
     src/Application.cpp
 )
@@ -33,7 +36,7 @@ if (DEFINED EMSCRIPTEN)
         "-sINVOKE_RUN=0"
         "-sDISABLE_DEPRECATED_FIND_EVENT_TARGET_BEHAVIOR=0"
         "-sEXPORTED_FUNCTIONS=['_main']"
-        "-sEXPORTED_RUNTIME_METHODS=['callMain', 'ccall', 'cwrap']"
+        "-sEXPORTED_RUNTIME_METHODS=['callMain', 'ccall', 'cwrap', 'UTF8ToString']"
         "-sFORCE_FILESYSTEM=1"
         "-sUSE_SDL=2"
         "-sALLOW_MEMORY_GROWTH=1" 

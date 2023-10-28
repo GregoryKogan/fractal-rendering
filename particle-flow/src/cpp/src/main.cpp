@@ -1,14 +1,16 @@
 #include <ctime>
 
 #include "Application.hpp"
+#include "messaging/messaging.hpp"
 
-int main(int argc, char *argv[]) {
+int main() {
+    startListeningForMessages();
+
     srand(time(NULL));
 
     Application app;
 
     app.loop();
-    app.draw();
 
     return 0;
 }
