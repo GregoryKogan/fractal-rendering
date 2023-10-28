@@ -33,7 +33,10 @@ export default defineComponent({
   methods: {
     sendMessage() {
       window.postMessage(
-        JSON.stringify({ to: "cpp", message: "Hello, world!" }),
+        JSON.stringify({
+          to: "cpp",
+          message: { type: "message", payload: "Hello, world!" },
+        }),
         "*"
       );
     },

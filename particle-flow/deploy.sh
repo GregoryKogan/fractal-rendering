@@ -3,6 +3,11 @@
 # abort on errors
 set -e
 
+# build cpp
+cd src/cpp/build
+make
+cd ../../..
+
 # build
 yarn build
 

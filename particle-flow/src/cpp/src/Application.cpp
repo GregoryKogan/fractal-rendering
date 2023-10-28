@@ -46,6 +46,11 @@ void Application::loop() {
         last_time_ = current_time;
         update((double)delta_time);
         draw();
+
+        if (Messenger::instance().has_message()) {
+            std::string message = Messenger::instance().get_message();
+            std::cout << "Message: " << message << "\n";
+        }
     }
 }
 

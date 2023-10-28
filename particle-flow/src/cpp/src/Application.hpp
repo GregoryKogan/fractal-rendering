@@ -2,6 +2,8 @@
 
 #include <iostream>
 
+#include "messaging/messaging.hpp"
+
 class Application {
    public:
     Application();

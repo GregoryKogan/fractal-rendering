@@ -4,9 +4,9 @@
 #include "messaging/messaging.hpp"
 
 int main() {
-    startListeningForMessages();
-
     srand(time(NULL));
+
+    Messenger::instance().start_listening();
 
     Application app;
 
