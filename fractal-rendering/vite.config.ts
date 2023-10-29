@@ -47,5 +47,5 @@ export default defineConfig({
   server: {
     port: 3000,
   },
-  base: '/particle-flow-2/'
+  base: '/fractal-rendering/'
 });
