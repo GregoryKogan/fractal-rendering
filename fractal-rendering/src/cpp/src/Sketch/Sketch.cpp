@@ -16,7 +16,7 @@ void Sketch::draw() const noexcept {
 
     int cell_width = std::max(std::min(window_width_, window_height_) / resolution_, 1);
 
-    for (int x = 0; x <= window_width_ / cell_width; ++x) {
+    for (int x = window_width_ / cell_width / 2; x <= window_width_ / cell_width; ++x) {
         for (int y = 0; y <= window_height_ / cell_width; ++y) {
             float scaled_x = std::lerp(-2.0, 2.0, float(x) / (window_width_ / cell_width));
             float scaled_y = std::lerp(-2.0, 2.0, float(y) / (window_height_ / cell_width));
@@ -25,7 +25,10 @@ void Sketch::draw() const noexcept {
             int brightness = 255 * iters / max_iterations_;
             SDL_SetRenderDrawColor(renderer_, brightness, brightness, brightness, 255);
             SDL_Rect rect{x * cell_width, y * cell_width, cell_width, cell_width};
+            SDL_Rect rect2{(window_width_ / cell_width - x) * cell_width,
+                           (window_height_ / cell_width - y) * cell_width, cell_width, cell_width};
             SDL_RenderFillRect(renderer_, &rect);
+            SDL_RenderFillRect(renderer_, &rect2);
         }
     }
 
