@@ -42,8 +42,9 @@ if (DEFINED EMSCRIPTEN)
         "-sFORCE_FILESYSTEM=1"
         "-sUSE_SDL=2"
         "-sALLOW_MEMORY_GROWTH=1" 
+        "-sTOTAL_MEMORY=256MB"
         "-sASYNCIFY"
-        "-O2"
+        "-O3"
     )
 else()
 

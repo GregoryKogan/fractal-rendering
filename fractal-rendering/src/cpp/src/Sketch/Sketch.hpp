@@ -12,10 +12,10 @@ class Sketch {
     Sketch(SDL_Renderer *renderer);
 
     void setup();
-    void update(double delta_time);
+    void update(const double &delta_time);
     void draw() const noexcept;
 
-    void set_window_size(int width, int height) noexcept;
+    void set_window_size(const int &width, const int &height) noexcept;
 
    private:
     SDL_Renderer *renderer_;
@@ -23,6 +23,7 @@ class Sketch {
     int window_height_ = 1024;
 
     int resolution_ = 256;
+    int cell_width_ = 4;
     int max_iterations_ = 30;
     std::complex<float> c_ = std::complex<float>(0.0f, 0.0f);
 
@@ -36,8 +37,7 @@ class Sketch {
     float animation_speed_ = 0.00003f;
 
     void calculate_c_() noexcept;
-
-    float is_in_set_(float x, float y) const noexcept;
+    float is_in_set_(const float &x, const float &y) const noexcept;
 };
 
 #endif
