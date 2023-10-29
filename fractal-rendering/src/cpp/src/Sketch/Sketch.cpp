@@ -22,8 +22,11 @@ void Sketch::draw() const noexcept {
             float scaled_y = std::lerp(-2.0, 2.0, float(y) / (window_height_ / cell_width));
             float iters = is_in_set_(scaled_x, scaled_y);
 
-            int brightness = 255 * iters / max_iterations_;
-            SDL_SetRenderDrawColor(renderer_, brightness, brightness, brightness, 255);
+            float t = iters / (float)max_iterations_;
+            int r = 9 * (1 - t) * t * t * t * 255;
+            int g = 15 * (1 - t) * (1 - t) * t * t * 255;
+            int b = 8.5 * (1 - t) * (1 - t) * (1 - t) * t * 255;
+            SDL_SetRenderDrawColor(renderer_, r, g, b, 255);
             SDL_Rect rect{x * cell_width, y * cell_width, cell_width, cell_width};
             SDL_Rect rect2{(window_width_ / cell_width - x) * cell_width,
                            (window_height_ / cell_width - y) * cell_width, cell_width, cell_width};
@@ -55,10 +58,10 @@ float Sketch::is_in_set_(float x, float y) const noexcept {
     int iterations = 0;
     while (++iterations < max_iterations_) {
         z = static_cast<std::complex<float>>(std::pow(z, 2)) + c_;
-        if (std::norm(z) > 4) break;
+        if (std::abs(z.real()) > 2 || std::abs(z.imag()) > 2) break;
     }
 
-    if (iterations < 2) return 0.0f;
+    if (iterations == 1) return 0.0f;
 
     float mod = std::sqrt(std::norm(z));
     float smooth = float(iterations) - std::log2(std::max(1.0f, std::log2(mod)));
