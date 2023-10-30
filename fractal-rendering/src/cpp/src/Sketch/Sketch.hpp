@@ -31,7 +31,7 @@ class Sketch {
     int grid_width_ = 0;
     std::vector<std::vector<float>> grid_;
 
-    int resolution_ = 512;
+    int resolution_ = 1024;
     int render_step_width_ = 6;
     int cell_width_ = 0;
     float scaled_x_step_ = 0.0f;
@@ -43,12 +43,15 @@ class Sketch {
 
     // interpolation animation for c_ between multiple points
     using Point = std::pair<float, float>;
-    std::vector<Point> c_points_ = {{0.0f, 0.0f},        {-0.4f, -0.59f}, {-0.54f, 0.54f}, {-0.8f, 0.156f},
-                                    {-0.835f, -0.2321f}, {0.0f, 0.8f},    {0.285f, 0.01f}, {0.34f, -0.05f},
-                                    {0.355f, 0.355f},    {0.37f, 0.1f},   {0.0f, 0.0f}};
+    std::vector<Point> c_points_ = {
+        {0.0f, 0.0f},    {-0.4f, -0.59f},    {-0.702f, -0.384f},  {-0.835f, -0.2321f}, {-2.0f, 0.0f},
+        {-0.8f, 0.156f}, {-0.835f, 0.2321f}, {-0.7269f, 0.1889f}, {-0.54f, 0.54f},     {-0.4f, 0.6f},
+        {0.0f, 0.8f},    {0.078f, 0.656f},   {0.355f, 0.355f},    {0.45f, 0.1428f},    {0.37f, 0.1f},
+        {0.285f, 0.01},  {0.285f, 0.0f},     {0.34f, -0.05},      {0.0f, 0.0f},
+    };
 
     float animation_progress_ = 0.0f;
-    float animation_speed_ = 0.00003f;
+    float animation_speed_ = 0.00001f;
 
     void render_grid_() noexcept;
     void render_sparse_grid() noexcept;
