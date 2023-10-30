@@ -23,7 +23,9 @@ class Sketch {
 
     int resolution_ = 350;
     int cell_width_ = 4;
-    int max_iterations_ = 30;
+    std::vector<std::vector<float>> grid_;
+
+    int max_iterations_ = 20;
     float c_real_ = 0.0f;
     float c_imag_ = 0.0f;
 
