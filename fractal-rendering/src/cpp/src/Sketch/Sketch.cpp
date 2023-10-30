@@ -3,17 +3,17 @@
 Sketch::Sketch(SDL_Renderer* renderer) : renderer_(renderer) { setup(); }
 
 void Sketch::setup() {
-    canvas_width_ = std::min(window_width_, window_height_);
-    canvas_center_ = canvas_width_ / 2;
-    canvas_offset_x_ = (window_width_ - canvas_width_) / 2;
-    canvas_offset_y_ = (window_height_ - canvas_width_) / 2;
-    cell_width_ = std::max(1, canvas_width_ / resolution_);
-    grid_height_ = canvas_width_ / cell_width_;
-    grid_width_ = grid_height_ / 2;
+    cell_width_ = std::max(1, std::min(window_width_, window_height_) / resolution_);
+    grid_height_ = resolution_;
+    grid_width_ = resolution_ / 2;
     scaled_x_step_ = 2.0f / (grid_width_ - 1) * render_step_width_;
     scaled_y_step_ = 4.0f / (grid_height_ - 1) * render_step_width_;
     grid_.resize(grid_height_);
     for (auto& row : grid_) row.resize(grid_width_, 0.0f);
+    canvas_width_ = cell_width_ * grid_height_;
+    canvas_center_ = canvas_width_ / 2;
+    canvas_offset_x_ = (window_width_ - canvas_width_) / 2;
+    canvas_offset_y_ = (window_height_ - canvas_width_) / 2;
 }
 
 void Sketch::update(const double& delta_time) {

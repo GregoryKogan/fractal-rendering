@@ -5,6 +5,7 @@
 #include <wasm_simd128.h>
 
 #include <cmath>
+#include <iostream>
 #include <numeric>
 
 class Sketch {
@@ -28,7 +29,7 @@ class Sketch {
     int grid_height_ = 0;
     int grid_width_ = 0;
 
-    int resolution_ = 1024;
+    int resolution_ = 512;
     int render_step_width_ = 6;
     int cell_width_ = 0;
     float scaled_x_step_ = 0.0f;
