@@ -3,6 +3,7 @@ project(flow)
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/../../public)
+add_compile_options("-msimd128")
 
 if (WIN32)
     # Forcing MSVC to use utf-8 encoding

@@ -2,6 +2,7 @@
 #define SKETCH_HPP
 
 #include <SDL2/SDL.h>
+#include <wasm_simd128.h>
 
 #include <cmath>
 #include <numeric>
@@ -28,8 +29,10 @@ class Sketch {
     int grid_width_ = 0;
 
     int resolution_ = 1024;
-    int render_step_width_ = 8;
+    int render_step_width_ = 6;
     int cell_width_ = 0;
+    float scaled_x_step_ = 0.0f;
+    float scaled_y_step_ = 0.0f;
     std::vector<std::vector<float>> grid_;
 
     int max_iterations_ = 50;
@@ -50,9 +53,11 @@ class Sketch {
     float animation_progress_ = 0.0f;
     float animation_speed_ = 0.00003f;
 
-    void calculate_c_() noexcept;
-    float is_in_set_(const float &x, const float &y) const noexcept;
-    std::tuple<int, int, int> get_color_(const float &t) const noexcept;
+    inline void calculate_c_() noexcept;
+    inline float is_in_set_(const float &x, const float &y) const noexcept;
+    inline std::tuple<int, int, int> get_color_(const float &t) const noexcept;
 };
+
+inline float fast_log2(float x);
 
 #endif
