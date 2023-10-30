@@ -3,9 +3,15 @@
 Sketch::Sketch(SDL_Renderer* renderer) : renderer_(renderer) { setup(); }
 
 void Sketch::setup() {
-    cell_width_ = std::max(std::min(window_width_, window_height_) / resolution_, 1);
-    grid_.resize(window_height_ / cell_width_);
-    for (auto& row : grid_) row.resize(window_width_ / cell_width_ / 2);
+    canvas_width_ = std::min(window_width_, window_height_);
+    canvas_center_ = canvas_width_ / 2;
+    canvas_offset_x_ = (window_width_ - canvas_width_) / 2;
+    canvas_offset_y_ = (window_height_ - canvas_width_) / 2;
+    cell_width_ = std::max(1, canvas_width_ / resolution_);
+    grid_height_ = canvas_width_ / cell_width_;
+    grid_width_ = grid_height_ / 2;
+    grid_.resize(grid_height_);
+    for (auto& row : grid_) row.resize(grid_width_);
 }
 
 void Sketch::update(const double& delta_time) {
@@ -13,17 +19,15 @@ void Sketch::update(const double& delta_time) {
     if (animation_progress_ >= 1.0f) animation_progress_ = 0.0f;
     calculate_c_();
 
-    const float scaled_x_step = 2.0f / (grid_[0].size() - 1);
-    const float scaled_y_step = 4.0f / (grid_.size() - 1);
-    const int grid_width = grid_[0].size();
-    const int grid_height = grid_.size();
+    const float scaled_x_step = 2.0f / (grid_width_ - 1);
+    const float scaled_y_step = 4.0f / (grid_height_ - 1);
 
     int x = 0;
     float scaled_x = 0.0f;
-    while (x < grid_width) {
+    while (x < grid_width_) {
         int y = 0;
         float scaled_y = -2.0f;
-        while (y < grid_height) {
+        while (y < grid_height_) {
             if ((x + y) % 2 == 0) {
                 y++;
                 scaled_y += scaled_y_step;
@@ -39,23 +43,19 @@ void Sketch::update(const double& delta_time) {
     }
 }
 
-#include <iostream>
 void Sketch::draw() const noexcept {
     SDL_SetRenderDrawColor(renderer_, 0, 0, 0, 255);
     SDL_RenderClear(renderer_);
 
-    const int grid_width = grid_[0].size();
-    const int grid_height = grid_.size();
-
-    for (int x = 0; x < grid_width; x++) {
-        for (int y = 0; y < grid_height; y++) {
+    for (int x = 0; x < grid_width_; x++) {
+        for (int y = 0; y < grid_height_; y++) {
             float t;
-            if ((x + y) % 2 == 0 && x > 0 && y > 0 && x < grid_width - 1 && y < grid_height - 1 &&
+            if ((x + y) % 2 == 0 && x > 0 && y > 0 && x < grid_width_ - 1 && y < grid_height_ - 1 &&
                 grid_[y - 1][x] == grid_[y + 1][x] && grid_[y][x - 1] == grid_[y][x + 1] &&
                 grid_[y - 1][x] == grid_[y][x - 1] && (grid_[y - 1][x] == 0.0f || grid_[y - 1][x] == 1.0f))
                 continue;
             else
-                t = is_in_set_((float)x / (grid_width - 1) * 2.0f, (float)y / (grid_height - 1) * 4.0f - 2.0f);
+                t = is_in_set_((float)x / (grid_width_ - 1) * 2.0f, (float)y / (grid_height_ - 1) * 4.0f - 2.0f);
 
             if (t == 0.0f || t == 1.0f) continue;
 
@@ -64,9 +64,11 @@ void Sketch::draw() const noexcept {
             const int b = 8.5 * (1 - t) * (1 - t) * (1 - t) * t * 255;
 
             SDL_SetRenderDrawColor(renderer_, r, g, b, 255);
-            SDL_Rect rect{window_width_ / 2 + x * cell_width_, y * cell_width_, cell_width_, cell_width_};
-            SDL_Rect rect_mirror{window_width_ / 2 - x * cell_width_ - cell_width_,
-                                 window_height_ - y * cell_width_ - cell_width_, cell_width_, cell_width_};
+            SDL_Rect rect{canvas_offset_x_ + canvas_center_ + x * cell_width_, canvas_offset_y_ + y * cell_width_,
+                          cell_width_, cell_width_};
+            SDL_Rect rect_mirror{canvas_offset_x_ + canvas_center_ - x * cell_width_ - cell_width_,
+                                 canvas_offset_y_ + canvas_width_ - y * cell_width_ - cell_width_, cell_width_,
+                                 cell_width_};
             SDL_RenderFillRect(renderer_, &rect);
             SDL_RenderFillRect(renderer_, &rect_mirror);
         }

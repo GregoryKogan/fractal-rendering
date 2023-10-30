@@ -18,14 +18,20 @@ class Sketch {
 
    private:
     SDL_Renderer *renderer_;
-    int window_width_ = 1024;
-    int window_height_ = 1024;
+    int window_width_ = 0;
+    int window_height_ = 0;
+    int canvas_width_ = 0;
+    int canvas_center_ = 0;
+    int canvas_offset_x_ = 0;
+    int canvas_offset_y_ = 0;
+    int grid_height_ = 0;
+    int grid_width_ = 0;
 
-    int resolution_ = 350;
-    int cell_width_ = 4;
+    int resolution_ = 450;
+    int cell_width_ = 0;
     std::vector<std::vector<float>> grid_;
 
-    int max_iterations_ = 20;
+    int max_iterations_ = 30;
     float c_real_ = 0.0f;
     float c_imag_ = 0.0f;
 
