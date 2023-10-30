@@ -12,7 +12,7 @@ class Sketch {
 
     void setup();
     void update(const double &delta_time);
-    void draw() const noexcept;
+    void draw() noexcept;
 
     void set_window_size(const int &width, const int &height) noexcept;
 
@@ -27,13 +27,16 @@ class Sketch {
     int grid_height_ = 0;
     int grid_width_ = 0;
 
-    int resolution_ = 450;
+    int resolution_ = 1024;
+    int render_step_width_ = 8;
     int cell_width_ = 0;
     std::vector<std::vector<float>> grid_;
 
-    int max_iterations_ = 30;
+    int max_iterations_ = 50;
     float c_real_ = 0.0f;
     float c_imag_ = 0.0f;
+
+    void render_grid_() noexcept;
 
     // interpolation animation for c_ between multiple points
     std::vector<std::pair<float, float>> c_points_ = {
@@ -49,6 +52,7 @@ class Sketch {
 
     void calculate_c_() noexcept;
     float is_in_set_(const float &x, const float &y) const noexcept;
+    std::tuple<int, int, int> get_color_(const float &t) const noexcept;
 };
 
 #endif
