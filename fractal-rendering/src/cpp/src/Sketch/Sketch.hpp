@@ -31,7 +31,7 @@ class Sketch {
     int grid_width_ = 0;
     std::vector<std::vector<float>> grid_;
 
-    int resolution_ = 1024;
+    int resolution_ = 600;
     int render_step_width_ = 6;
     int cell_width_ = 0;
     float scaled_x_step_ = 0.0f;
