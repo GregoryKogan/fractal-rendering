@@ -4,13 +4,18 @@
 #include "messaging/messaging.hpp"
 
 int main() {
-    srand(time(NULL));
+  srand(time(NULL));
 
-    Messenger::instance().start_listening();
+  Messenger::instance().start_listening();
 
-    Application app;
+  Application app;
 
-    app.loop();
+  emscripten_set_main_loop_arg(
+      [](void *app_ptr) {
+        Application *app = static_cast<Application *>(app_ptr);
+        app->loop();
+      },
+      &app, 0, 1);
 
-    return 0;
+  return 0;
 }
